@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClubRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -36,6 +38,22 @@ class Club
      * @ORM\Column(type="string", length=120, nullable=true)
      */
     private $api_token;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Player::class, mappedBy="club")
+     */
+    private $player;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Tournament::class, mappedBy="club")
+     */
+    private $tournament;
+
+    public function __construct()
+    {
+        $this->player = new ArrayCollection();
+        $this->tournament = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -86,6 +104,68 @@ class Club
     public function setApiToken(?string $api_token): self
     {
         $this->api_token = $api_token;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Player[]
+     */
+    public function getPlayer(): Collection
+    {
+        return $this->player;
+    }
+
+    public function addPlayer(Player $player): self
+    {
+        if (!$this->player->contains($player)) {
+            $this->player[] = $player;
+            $player->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlayer(Player $player): self
+    {
+        if ($this->player->contains($player)) {
+            $this->player->removeElement($player);
+            // set the owning side to null (unless already changed)
+            if ($player->getClub() === $this) {
+                $player->setClub(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tournament[]
+     */
+    public function getTournament(): Collection
+    {
+        return $this->tournament;
+    }
+
+    public function addTournament(Tournament $tournament): self
+    {
+        if (!$this->tournament->contains($tournament)) {
+            $this->tournament[] = $tournament;
+            $tournament->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournament(Tournament $tournament): self
+    {
+        if ($this->tournament->contains($tournament)) {
+            $this->tournament->removeElement($tournament);
+            // set the owning side to null (unless already changed)
+            if ($tournament->getClub() === $this) {
+                $tournament->setClub(null);
+            }
+        }
 
         return $this;
     }

@@ -27,6 +27,16 @@ class Stage
      */
     private $groups;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Tournament::class, inversedBy="stage")
+     */
+    private $tournament;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Player::class)
+     */
+    private $player;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +62,30 @@ class Stage
     public function setGroups(string $groups): self
     {
         $this->groups = $groups;
+
+        return $this;
+    }
+
+    public function getTournament(): ?Tournament
+    {
+        return $this->tournament;
+    }
+
+    public function setTournament(?Tournament $tournament): self
+    {
+        $this->tournament = $tournament;
+
+        return $this;
+    }
+
+    public function getPlayer(): ?Player
+    {
+        return $this->player;
+    }
+
+    public function setPlayer(?Player $player): self
+    {
+        $this->player = $player;
 
         return $this;
     }

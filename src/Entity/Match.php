@@ -48,6 +48,11 @@ class Match
      */
     private $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Tournament::class, inversedBy="matchs")
+     */
+    private $tournament;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +126,18 @@ class Match
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getTournament(): ?Tournament
+    {
+        return $this->tournament;
+    }
+
+    public function setTournament(?Tournament $tournament): self
+    {
+        $this->tournament = $tournament;
 
         return $this;
     }
