@@ -28,7 +28,7 @@ class Stage
     private $groups;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Tournament::class, inversedBy="stage")
+     * @ORM\ManyToOne(targetEntity=Tournament::class, inversedBy="stage",cascade={"persist"})
      */
     private $tournament;
 

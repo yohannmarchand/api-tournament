@@ -244,4 +244,9 @@ class Tournament
         return $this;
     }
 
+    public function getNbPlayer(): int
+    {
+        return count($this->players);
+    }
+
 }
