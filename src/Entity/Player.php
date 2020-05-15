@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\PlayerRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PlayerRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=PlayerRepository::class)
+ * @ApiResource
  */
 class Player
 {
@@ -30,14 +32,14 @@ class Player
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity=Tournament::class, mappedBy="winner")
-     */
-    private $tournaments;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Club::class, inversedBy="player")
      */
     private $club;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tournament::class, inversedBy="players")
+     */
+    private $tournaments;
 
     public function __construct()
     {
@@ -73,6 +75,18 @@ class Player
         return $this;
     }
 
+    public function getClub(): ?Club
+    {
+        return $this->club;
+    }
+
+    public function setClub(?Club $club): self
+    {
+        $this->club = $club;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Tournament[]
      */
@@ -85,7 +99,6 @@ class Player
     {
         if (!$this->tournaments->contains($tournament)) {
             $this->tournaments[] = $tournament;
-            $tournament->setWinner($this);
         }
 
         return $this;
@@ -95,24 +108,10 @@ class Player
     {
         if ($this->tournaments->contains($tournament)) {
             $this->tournaments->removeElement($tournament);
-            // set the owning side to null (unless already changed)
-            if ($tournament->getWinner() === $this) {
-                $tournament->setWinner(null);
-            }
         }
 
         return $this;
     }
 
-    public function getClub(): ?Club
-    {
-        return $this->club;
-    }
 
-    public function setClub(?Club $club): self
-    {
-        $this->club = $club;
-
-        return $this;
-    }
 }

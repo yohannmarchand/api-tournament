@@ -2,13 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\TournamentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TournamentRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=TournamentRepository::class)
+ * @ApiResource
+ * 
  */
 class Tournament
 {
@@ -55,19 +58,23 @@ class Tournament
     private $stage;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Player::class, inversedBy="tournaments")
-     */
-    private $winner;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Club::class, inversedBy="tournament")
      */
     private $club;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Player::class, mappedBy="tournaments")
+     */
+    private $players;
+
+
 
     public function __construct()
     {
         $this->matchs = new ArrayCollection();
         $this->stage = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->players = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -197,18 +204,6 @@ class Tournament
         return $this;
     }
 
-    public function getWinner(): ?Player
-    {
-        return $this->winner;
-    }
-
-    public function setWinner(?Player $winner): self
-    {
-        $this->winner = $winner;
-
-        return $this;
-    }
-
     public function getClub(): ?Club
     {
         return $this->club;
@@ -220,4 +215,33 @@ class Tournament
 
         return $this;
     }
+
+    /**
+     * @return Collection|Player[]
+     */
+    public function getPlayers(): Collection
+    {
+        return $this->players;
+    }
+
+    public function addPlayer(Player $player): self
+    {
+        if (!$this->players->contains($player)) {
+            $this->players[] = $player;
+            $player->addTournament($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlayer(Player $player): self
+    {
+        if ($this->players->contains($player)) {
+            $this->players->removeElement($player);
+            $player->removeTournament($this);
+        }
+
+        return $this;
+    }
+
 }
