@@ -37,7 +37,7 @@ class Player
     private $club;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tournament::class, inversedBy="players")
+     * @ORM\ManyToMany(targetEntity=Tournament::class, inversedBy="players",cascade={"persist"})
      */
     private $tournaments;
 
